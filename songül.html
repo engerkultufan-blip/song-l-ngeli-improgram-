@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Songül'ün Dönüşüm Panosu!</title>
+    <!-- Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom Stiller */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfcff;
+            background-image: radial-gradient(at 4% 1%, rgb(253, 230, 255) 0px, transparent 50%), 
+                              radial-gradient(at 97% 96%, rgb(230, 240, 255) 0px, transparent 50%);
+        }
+
+        /* Sekme Butonları */
+        .tab-button {
+            transition: all 0.3s ease;
+            color: #6b7280; /* Gri metin */
+            border-color: transparent;
+        }
+
+        .tab-button.active {
+            border-color: #a855f7; /* Mor */
+            background-color: #f3e8ff; /* Açık Mor */
+            color: #7e22ce; /* Koyu Mor */
+            font-weight: 600;
+        }
+        
+        .tab-button:not(.active):hover {
+            background-color: #f9fafb;
+            border-color: #d8b4fe;
+            color: #4b5563;
+        }
+
+        /* İçerik Kartları */
+        .content-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Callout Kutusu (Süper Güç) */
+        .callout {
+            background-color: #fefce8; /* Yumuşak Sarı */
+            border-left: 4px solid #facc15; /* Sarı */
+            border-radius: 8px;
+        }
+        
+        /* Gemini Notu Kutusu */
+        .gemini-note {
+            background-color: #e0f2fe; /* Yumuşak Mavi */
+            border-left: 4px solid #38bdf8; /* Mavi */
+            border-radius: 8px;
+        }
+        
+        /* Gemini Bilgi Köşesi */
+        .gemini-info-box {
+            background-color: #f0fdf4; /* Yumuşak Yeşil */
+            border-left: 4px solid #4ade80; /* Yeşil */
+            border-radius: 8px;
+            margin-top: 24px;
+            padding: 16px;
+        }
+
+        /* Liste elemanları için stil */
+        .content-card .tab-content ul {
+            list-style: none;
+            padding-left: 0;
+            space-y-4; /* Liste elemanları arasına boşluk */
+        }
+        .content-card .tab-content ul li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 12px;
+            color: #4b5563; /* Daha koyu gri metin */
+        }
+        .content-card .tab-content ul li::before {
+            content: '✓'; /* Checkmark ikonu */
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: #a855f7; /* Mor */
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        /* İç içe liste stilleri (detaylar için) */
+        .content-card .tab-content ul ul {
+            list-style: disc;
+            padding-left: 20px;
+            margin-top: 8px;
+            space-y: 2;
+        }
+        .content-card .tab-content ul ul li {
+            padding-left: 8px;
+            margin-bottom: 8px;
+        }
+        .content-card .tab-content ul ul li::before {
+            content: ''; /* İç listede checkmark olmasın */
+        }
+        
+        /* Başlıklar için alt-metin stili */
+        .content-card .tab-content li h5 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            color: #374151; /* text-gray-700 */
+            margin-bottom: 4px;
+        }
+        .content-card .tab-content li p.description {
+            font-size: 0.875rem; /* text-sm */
+            color: #4b5563; /* text-gray-600 */
+            margin-bottom: 8px;
+        }
+
+
+        /* Animasyon */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        /* Input ve textarea focus stilleri */
+        input[type="number"]:focus, input[type="text"]:focus, textarea:focus {
+            border-color: #a855f7; /* Mor */
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2); /* Mor tonunda hafif gölge */
+            outline: none;
+        }
+
+        /* Grafik Barları için Stiller */
+        .progress-bar-bg {
+            background-color: #e9d5ff; /* Açık Mor */
+            border-radius: 8px;
+            overflow: hidden;
+            height: 24px;
+        }
+        .progress-bar-fg {
+            background-color: #a855f7; /* Koyu Mor */
+            height: 100%;
+            transition: width 0.5s ease-out;
+            white-space: nowrap;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+        }
+        
+        /* YENİ: Not Görüntüleme Stili */
+        .whitespace-pre-wrap {
+            white-space: pre-wrap; /* Satır sonlarını ve boşlukları korur */
+            word-wrap: break-word; /* Uzun kelimeleri kırar */
+        }
+        /* GÜNCELLEME: Kayıtlı notlar için stil */
+        #savedNotesDisplay .note-item {
+            background-color: #f9fafb; /* gray-50 */
+            border: 1px solid #f3f4f6; /* gray-100 */
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        #savedNotesDisplay .note-content {
+            flex-grow: 1;
+        }
+        #savedNotesDisplay .note-text {
+            display: block; /* Ensures <p> takes full width */
+            color: #374151; /* gray-700 */
+        }
+        #savedNotesDisplay .note-date {
+            font-size: 0.75rem; /* text-xs */
+            color: #6b7280; /* gray-500 */
+            margin-top: 4px;
+        }
+        #savedNotesDisplay .delete-note-btn {
+            background: none;
+            border: none;
+            color: #ef4444; /* red-500 */
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 9999px; /* rounded-full */
+            flex-shrink: 0;
+        }
+        #savedNotesDisplay .delete-note-btn:hover {
+            background-color: #fee2e2; /* red-100 */
+        }
+
+        /* YENİ: To-Do List Stilleri */
+        #taskList li {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* 0.5rem */
+            font-size: 0.875rem; /* text-sm */
+            padding: 8px;
+            border-radius: 6px;
+            background-color: #f9fafb; /* gray-50 */
+        }
+        #taskList li input[type='checkbox'] {
+            width: 16px; /* h-4 w-4 */
+            height: 16px;
+            accent-color: #a855f7; /* purple-500 */
+            flex-shrink: 0;
+        }
+        #taskList li span {
+            flex-grow: 1; /* Geri kalan alanı kapla */
+            color: #374151; /* gray-700 */
+            word-break: break-all; /* Uzun görev metinlerini kır */
+        }
+        #taskList li span.completed {
+            text-decoration: line-through;
+            color: #9ca3af; /* gray-400 */
+        }
+        #taskList li button.delete-btn {
+            background: none;
+            border: none;
+            color: #ef4444; /* red-500 */
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 9999px; /* rounded-full */
+            flex-shrink: 0;
+        }
+        #taskList li button.delete-btn:hover {
+            background-color: #fee2e2; /* red-100 */
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- BAŞLIK & FOTOĞRAF BÖLÜMÜ --><header class="text-center mb-10 fade-in flex flex-col items-center">
+            <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full overflow-hidden border-4 border-purple-400 shadow-lg mb-4">
+                <!-- FOTOĞRAF DÜZELTMESİ: Doğrudan dosya adını kullan -->
+                <img src="image_f2a162.jpg" alt="Songül Demir" class="object-cover w-full h-full">
+            </div>
+            <h1 class="text-4xl sm:text-5xl font-bold text-purple-800">
+                Songül'ün Dönüşüm Panosu ✨
+            </h1>
+            <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
+                Vizyonunu gerçeğe dönüştürme zamanı! Bu pano, senin potansiyelini en üst düzeye çıkarman ve hedeflerine ulaşman için tasarlandı.
+            </p>
+        </header>
+
+        <!-- STRATEJİK VİZYON (SÜPER GÜÇ) BÖLÜMÜ --><div class="mb-10 fade-in" style="animation-delay: 0.2s;">
+            <div class="callout p-6">
+                <h3 class="text-xl font-semibold text-yellow-800 mb-2 flex items-center">
+                    <!-- Ikon: Yıldız --><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118L2.98 9.112c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                    Stratejik Vizyon: Senin Süper Gücün!
+                </h3>
+                <p class="text-yellow-700">
+                    Senin "ekstra" gücün, <strong>Siyaset Bilimi</strong> ile <strong>Python</strong>'u birleştirmek. Bu, seni "Siyasal Veri Bilimcisi" yapacak. Sadece politikayı yorumlayan değil, aynı zamanda veriyi analiz ederek **öngörüde bulunan** ve strateji belirleyen bir lider olacaksın. Bu pano, bu vizyonu inşa etmen için senin kişisel merkezin.
+                </p>
+            </div>
+        </div>
+
+        <!-- SEKMELİ YOL HARİTASI & TAKİP BÖLÜMÜ --><div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+
+            <!-- Sol Panel: Sekmeli İçerikler --><div class="lg:col-span-2 fade-in" style="animation-delay: 0.4s;">
+                <!-- Sekme Başlıkları --><div class="flex flex-wrap gap-2 sm:gap-4 mb-6">
+                    <!-- YENİ SEKME: Hedeflerim -->
+                    <button id="btn-hedeflerim" class="tab-button active flex-grow sm:flex-grow-0 text-sm sm:text-base p-3 px-4 border-b-4 rounded-t-lg" onclick="changeTab('hedeflerim')">
+                        🎯 Hedeflerim
+                    </button>
+                    <button id="btn-siyaset" class="tab-button flex-grow sm:flex-grow-0 text-sm sm:text-base p-3 px-4 border-b-4 rounded-t-lg" onclick="changeTab('siyaset')">
+                        🏛️ Siyaset Bilimi
+                    </button>
+                    <button id="btn-ingilizce" class="tab-button flex-grow sm:flex-grow-0 text-sm sm:text-base p-3 px-4 border-b-4 rounded-t-lg" onclick="changeTab('ingilizce')">
+                        🌍 İngilizce
+                    </button>
+                    <button id="btn-python" class="tab-button flex-grow sm:flex-grow-0 text-sm sm:text-base p-3 px-4 border-b-4 rounded-t-lg" onclick="changeTab('python')">
+                        🐍 Python
+                    </button>
+                    <button id="btn-analitik" class="tab-button flex-grow sm:flex-grow-0 text-sm sm:text-base p-3 px-4 border-b-4 rounded-t-lg" onclick="changeTab('analitik')">
+                        🧠 Analitik Düşünme
+                    </button>
+                    <button id="btn-genel" class="tab-button flex-grow sm:flex-grow-0 text-sm sm:text-base p-3 px-4 border-b-4 rounded-t-lg" onclick="changeTab('genel')">
+                        💡 Genel Kültür
+                    </button>
+                </div>
+
+                <!-- Sekme İçerikleri --><div class="content-card p-6 sm:p-8">
+                    <!-- YENİ İÇERİK: Hedeflerim --><div id="hedeflerim" class="tab-content">
+                        <h3 class="text-2xl font-bold text-purple-700 mb-4">Vizyonunu ve Hedeflerini Tanımla</h3>
+                        <p class="text-gray-600 mb-6">Burası senin pusulan. Nereye ulaşmak istediğini yaz. Neden başladığını hatırla ve vizyonunu netleştir. Eklediğin tüm hedefler buraya kaydedilecek.</p>
+                        
+                        <!-- Dinamik Hedef Listesi -->
+                        <div id="goal-list" class="space-y-4">
+                            <!-- JS burayı dolduracak -->
+                        </div>
+
+                        <!-- Yeni Hedef Ekleme Bölümü -->
+                        <div class="mt-8 border-t pt-6">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-2">Yeni Hedef Alanı Ekle</h4>
+                            <p class="text-sm text-gray-600 mb-4">Buraya 'Liderlik', 'Finans Okuryazarlığı' gibi kendi özel alanlarını ekleyebilirsin.</p>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <input type="text" id="newGoalName" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Yeni hedefin adı (örn: Liderlik)">
+                                <button onclick="addNewGoalCategory()" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-300 whitespace-nowrap">Ekle</button>
+                            </div>
+                        </div>
+
+                        <button onclick="saveGoals()" class="w-full bg-green-500 text-white p-3 rounded-lg font-semibold mt-6 hover:bg-green-600 transition duration-300">
+                            Tüm Hedeflerimi Kaydet
+                        </button>
+                    </div>
+
+                    <!-- GÜNCELLENMİŞ Siyaset Bilimi İçeriği --><div id="siyaset" class="tab-content" style="display: none;">
+                        <h3 class="text-2xl font-bold text-purple-700 mb-1">Alan 1: Siyaset Bilimi (Uzmanlık Alanın)</h3>
+                        <p class="text-lg text-gray-600 mb-6"><strong>Amaç:</strong> Teorik temeli sarsılmaz bir kale yapmak ve bu temeli güncel analizlerle birleştirmek.</p>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Eylem Planı ve Kaynaklar:</h4>
+                        <ul class="space-y-6">
+                            <li>
+                                <h5>Klasikler (Temel)</h5>
+                                <p class="description">Bu düşünürler, "devlet", "egemenlik", "birey" ve "toplum" gibi temel kavramları tanımlamıştır. Modern siyasetin DNA'sını oluştururlar.</p>
+                                <ul>
+                                    <li><strong>Machiavelli - <i>Prens</i>:</strong> "Realpolitik" kavramı. Amaca ulaşmak için gücün nasıl kullanılacağını (veya kullanılmaması gerektiğini) anlatır.</li>
+                                    <li><strong>Hobbes - <i>Leviathan</i>:</strong> "Toplum Sözleşmesi" fikrinin temeli. İnsanların neden bir devlete ihtiyaç duyduğunu (kaostan kaçış) açıklar.</li>
+                                    <li><strong>Locke - <i>Yönetim Üzerine İkinci İnceleme</i>:</strong> Liberalizmin babası. Yaşam, özgürlük ve mülkiyet haklarını savunur.</li>
+                                    <li><strong>Rousseau - <i>Toplum Sözleşmesi</i>:</strong> "Halk egemenliği" ve "genel irade" kavramlarını öne çıkarır. Demokrasi teorisi için kritiktir.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Modern Teorisyenler (Bağlam)</h5>
+                                <p class="description">Günümüz dünyasını, kimlik politikalarını, uluslararası ilişkileri ve güç dinamiklerini onların gözünden gör.</p>
+                                <ul>
+                                    <li><strong>Hannah Arendt - <i>Kötülüğün Sıradanlığı</i>:</strong> Totalitarizm ve insanlık durumunu analiz eder.</li>
+                                    <li><strong>John Rawls - <i>Bir Adalet Teorisi</i>:</strong> Modern sosyal adalet tartışmalarının merkezindedir.</li>
+                                    <li><strong>Fukuyama - <i>Tarihin Sonu mu?</i>:</strong> Liberal demokrasinin zaferini ilan etti (ve sonra sorguladı).</li>
+                                    <li><strong>Huntington - <i>Medeniyetler Çatışması</i>:</strong> Kültürel kimliklerin gelecekteki çatışmaların ana kaynağı olacağını öne sürdü.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Podcast & Tartışma Kanalları</h5>
+                                <p class="description">Sadece okuma, dinle ve farklı argümanları duy. (Çoğu İngilizce, bu da İngilizce sekmen için pratik!)</p>
+                                <ul>
+                                    <li><strong>The Foreign Desk (Monocle):</strong> Şık ve derinlemesine küresel analizler.</li>
+                                    <li><strong>Political Gabfest (Slate):</strong> ABD siyaseti üzerine hararetli ve zekice tartışmalar.</li>
+                                    <li><strong>Pod Save the World:</strong> Dış politika ve uluslararası ilişkiler üzerine.</li>
+                                    <li><strong>(TR) Medyascope - Gündem:</strong> Ruşen Çakır ve konuklarının güncel Türkiye ve dünya analizleri.</li>
+                                    <li><strong>(TR) Nevşin Mengü - Bugün Ne Oldu?:</strong> Hızlı ve dinamik günlük gündem.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Think Tank'ler (Analiz)</h5>
+                                <p class="description">Bunlar politika üretilen yerlerdir. Raporlarını "analitik düşünme" sekmesindeki gibi analiz et: Tezi ne? Kanıtı ne? Zayıf yönü ne?</p>
+                                <ul>
+                                    <li><strong>Brookings Institution:</strong> Kapsamlı, merkez-sol eğilimli analizler.</li>
+                                    <li><strong>Chatham House:</strong> İngiliz perspektifinden küresel analizler.</li>
+                                    <li><strong>RAND Corporation:</strong> Güvenlik ve savunma odaklı.</li>
+                                    <li><strong>(TR) SETA, EDAM, TESEV, İKV:</strong> Türkiye'nin farklı perspektiflerden dış politika ve iç dinamik analizleri.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- GÜNCELLENMİŞ İNGİLİZCE İÇERİĞİ --><div id="ingilizce" class="tab-content" style="display: none;">
+                        <h3 class="text-2xl font-bold text-purple-700 mb-1">Alan 2: İngilizce (Küresel Anahtar)</h3>
+                        <p class="text-lg text-gray-600 mb-6"><strong>Amaç:</strong> İletişim kurmanın ötesine geç; ikna et, tartış ve ilham ver (C1/C2 Seviyesi).</p>
+                        <ul class="space-y-6">
+                            <li>
+                                <h5>Pasif Gelişim (Input) - Önerilen Kaynaklar</h5>
+                                <p class="description">Her gün maruz kal. Kulağını ve gözünü dile alıştır.</p>
+                                <ul>
+                                    <li><strong>Dinleme (Akademik):</strong> YouTube Kanalları: <strong>YaleCourses</strong> (Örn: "Introduction to Political Philosophy"), <strong>LSE Events</strong>, <strong>TED Talks</strong> (Resmi kanal).</li>
+                                    <li><strong>Dinleme (Güncel):</strong> Podcast'ler: <strong>The Daily (NYT)</strong>, <strong>BBC Global News Podcast</strong>, <strong>The Economist Radio</strong>.</li>
+                                    <li><strong>Okuma (Yoğun):</strong> <strong>The Economist</strong>, <strong>The New Yorker</strong>, <strong>Foreign Affairs</strong>, <strong>The Atlantic</strong>. Bu yayınlardan haftada bir makale seç ve *kelime kelime* analiz et.</li>
+                                    <li><strong>İzleme (İleri Seviye):</strong> <strong>Vox</strong> (Harika analizler), <strong>Last Week Tonight (John Oliver)</strong> (Hızlı konuşma, mizah ve siyasi eleştiri).</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Aktif Gelişim (Output) - Eylem Adımları</h5>
+                                <p class="description">Dili tüketmek yetmez, üretmek zorundasın.</p>
+                                <ul>
+                                    <li><strong>"Shadowing" Tekniği:</strong> Bir TED konuşmasını aç, konuşmacıyla aynı anda (birkaç saniye geriden) onu taklit ederek konuş. Akıcılık (fluency) için harikadır.</li>
+                                    <li><strong>Akademik Tartışma:</strong> Okuduğun bir think-tank raporuna (örn: Brookings) katılmadığın bir noktayı belirle ve buna karşı 150 kelimelik bir "rebuttal" (karşı argüman) yaz.</li>
+                                    <li><strong>Teknik Dil (Python + İngilizce):</strong> Python'daki `Pandas` kütüphanesinin resmi dokümantasyonunu (<strong>pandas.pydata.org</strong>) oku. <strong>Kaggle</strong>'daki Siyaset Bilimi ile ilgili bir "notebook"u İngilizce takip et.</li>
+                                    <li><strong>Uygulamalar:</strong> Konuşma pratiği için <strong>HelloTalk</strong> veya <strong>Tandem</strong>. Kelime ezberi için <strong>Anki</strong> (çok güçlüdür, öğrenmesi zaman alır ama değer).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- GÜNCELLENMİŞ Python İçeriği --><div id="python" class="tab-content" style="display: none;">
+                        <h3 class="text-2xl font-bold text-purple-700 mb-1">Alan 3: Python (Veri Aracı)</h3>
+                        <p class="text-lg text-gray-600 mb-6"><strong>Amaç:</strong> Siyaset Bilimi'ndeki teorileri ve soruları veriye dökmek ve veriden cevaplar çıkarmak.</p>
+                        <ul class="space-y-6">
+                            <li>
+                                <h5>Python'u Nasıl Öğrenmeli?</h5>
+                                <p class="description">Bu bir Siyaset Bilimci'nin Python öğrenme rehberidir, yazılımcının değil.</p>
+                                <ul>
+                                    <li><strong>Proje Odaklı Git:</strong> Temel 'for' döngüleri, 'if' koşulları ve 'fonksiyon'ları öğrendikten sonra (tahmini 2-3 hafta), hemen bir proje seç. Temellere aylarca takılıp kalma.</li>
+                                    <li><strong>Hata Yapmaktan Korkma:</strong> Hata mesajları (error) senin düşmanın değil, rehberindir. Hata mesajını kopyala, Google'a yapıştır. Cevap %99 <strong>Stack Overflow</strong>'dadır.</li>
+                                    <li><strong>Kütüphaneler Her Şeydir:</strong> Senin gücün Python'ı sıfırdan yazmak değil, <strong>Pandas</strong>, <strong>Matplotlib</strong> gibi güçlü kütüphaneleri kullanmaktır.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Temel Kaynaklar ve Kütüphaneler</h5>
+                                <ul>
+                                    <li><strong>Kurslar:</strong> <strong>freeCodeCamp</strong> ("Python for Everybody"), <strong>Coursera</strong> (Dr. Chuck's "Python for Everybody"), <strong>BTK Akademi</strong>.</li>
+                                    <li><strong>Kütüphane 1: Pandas</strong> (Veri analizi ve manipülasyonu. Senin Excel'in bu olacak.)</li>
+                                    <li><strong>Kütüphane 2: Matplotlib & Seaborn</strong> (Veri görselleştirme. Analizlerini sunmak için.)</li>
+                                    <li><strong>Kütüphane 3: NLTK / TextBlob</strong> (Doğal Dil İşleme. Metin analizi, duygu analizi için.)</li>
+                                    <li><strong>Kütüphane 4: Scikit-learn</strong> (Makine Öğrenimi. Gelecekte, öngörü modelleri kurmak için.)</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Siyaset Bilimi için Python Proje Örnekleri</h5>
+                                <ul>
+                                    <li><strong>Basit Projeler (Başlangıç):</strong>
+                                        <ul>
+                                            <li>Seçim barajı hesaplayıcı (girilen parti oylarına göre milletvekili dağılımı).</li>
+                                            <li>Basit web kazıyıcı (<strong>BeautifulSoup</strong> ile) bir haber sitesinden güncel başlıkları çekmek.</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Orta Seviye Projeler (Veri Analizi):</strong>
+                                        <ul>
+                                            <li><strong>Proje 1 (Mutlaka Yap):</strong> Dünya Bankası (World Bank Open Data) veya Kaggle'dan "Demokrasi Endeksi" ve "Kişi Başı GSYİH" verilerini indir. <strong>Pandas</strong> ile temizle, birleştir ve <strong>Matplotlib</strong> ile ikisi arasında bir korelasyon grafiği (scatter plot) çiz.</li>
+                                            <li><strong>Proje 2:</strong> TÜİK'ten (veya benzeri bir kaynaktan) son 20 yılın işsizlik ve enflasyon verilerini çek. Çizgi grafiği ile görselleştir.</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>İleri Seviye Projeler (Veri Bilimi):</strong>
+                                        <ul>
+                                            <li><strong>Proje 3:</strong> X (Twitter) API'si ile belli bir siyasi hashtag (#) altında atılan tweet'leri çek. <strong>TextBlob</strong> veya <strong>NLTK</strong> kullanarak basit bir "duygu analizi" (sentiment analysis) yap (Tweet'ler pozitif mi, negatif mi, nötr mü?).</li>
+                                            <li><strong>Proje 4:</strong> Bir siyasetçinin meclis konuşmalarının metinlerini bul. Bu metinleri analiz ederek en sık kullandığı kelime bulutunu (word cloud) oluştur.</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- GÜNCELLENMİŞ Analitik Düşünme İçeriği --><div id="analitik" class="tab-content" style="display: none;">
+                        <h3 class="text-2xl font-bold text-purple-700 mb-1">Alan 4: Analitik Düşünme (Yöntem)</h3>
+                        <p class="text-lg text-gray-600 mb-6"><strong>Amaç:</strong> Gürültüyü sinyalden ayırmak. Görünmeyeni görmek ve karmaşık sorunları çözmek.</p>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Eylem Planı ve Kaynaklar:</h4>
+                        <ul class="space-y-6">
+                            <li>
+                                <h5>Zihinsel Modeller (Mental Models)</h5>
+                                <p class="description">Bunlar, dünyayı anlamak için kullanabileceğin düşünce araçlarıdır.</p>
+                                <ul>
+                                    <li><strong>"First Principles Thinking" (İlk Prensipler):</strong> Bir sorunu temel, reddedilemez doğrularına kadar ayırmak. "Neden?" diye 5 kez sormak buna bir örnektir.</li>
+                                    <li><strong>"Zihin Haritaları" (Mind Mapping):</strong> Karmaşık bir konuyu (örn: "Ortadoğu Sorunu") görsel bir haritaya dökerek alt başlıklarını ve bağlantılarını görmek.</li>
+                                    <li><strong>Eleştirel Okuma:</strong> Okuduğun *her* makalede (Siyaset Bilimi, gazete) kendine sor: "Yazarın asıl amacı ne? Hangi varsayımlarda bulunuyor? Hangi kanıtları *kullanmıyor*?"</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Pratik Alanları ve Oyunlar</h5> <!-- YENİ BAŞLIK -->
+                                <p class="description">Analitik düşünce, pratikle gelişen bir kastır. Bu araçları ve oyunları kullanarak beynini çalıştır.</p> <!-- YENİ AÇIKLAMA -->
+                                <ul>
+                                    <li><strong>Sistematik Kodlama:</strong> Python'da bir hata (bug) aldığında, bu bir analitik düşünme egzersizidir. Panikleme. Hata mesajını oku, problemi izole et, çözümü araştır.</li>
+                                    <li><strong>Strateji (Oyun):</strong> <strong>Satranç</strong> (Lichess.org) veya <strong>Go</strong>. Sadece oyna değil, *neden* kaybettiğini analiz et.</li> <!-- GÜNCELLENDİ -->
+                                    <li><strong>Mantık Bulmacaları (Web):</strong> <strong>Brilliant.org</strong> (Logic bölümü), <strong>Khan Academy</strong> (Logic puzzles).</li> <!-- GÜNCELLENDİ -->
+                                    <li><strong>Puzzle Oyunları (Mobil/PC):</strong> <strong>Portal 1 & 2</strong> (Uzamsal düşünme ve problem çözme), <strong>The Witness</strong> (Örüntü tanıma), <strong>Mini Metro</strong> (Sistem düşüncesi ve optimizasyon).</li> <!-- YENİ -->
+                                    <li><strong>Simülasyon Oyunları:</strong> <strong>Civilization VI</strong> veya <strong>Cities: Skylines</strong>. Kaynak yönetimi, uzun vadeli planlama ve sistemik etkileri anlama.</li> <!-- YENİ -->
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Kavramsal Kitaplar</h5>
+                                <ul>
+                                    <li><strong>Daniel Kahneman - <i>Hızlı ve Yavaş Düşünme</i>:</strong> Düşünce hatalarını (biases) anlamak için temel bir eser.</li>
+                                    <li><strong>Nassim Nicholas Taleb - <i>Siyah Kuğu</i>:</strong> Belirsizlik, risk ve öngörülemez olanın etkileri üzerine.</li>
+                                    <li><strong>Donella Meadows - <i>Thinking in Systems</i>:</strong> Olayların birbirine nasıl bağlı olduğunu (sistem düşüncesi) anlamak için.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- GÜNCELLENMİŞ GENEL KÜLTÜR İÇERİĞİ --><div id="genel" class="tab-content" style="display: none;">
+                        <h3 class="text-2xl font-bold text-purple-700 mb-1">Alan 5: Genel Kültür (Bağlam ve Ufuk)</h3>
+                        <p class="text-lg text-gray-600 mb-6"><strong>Amaç:</strong> Siyaseti; tarih, felsefe, sanat ve teknoloji ile ilişkilendirerek "büyük resmi" görmek.</p>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Eylem Planı ve Örnek Kaynaklar:</h4>
+                        <ul class="space-y-6">
+                            <li>
+                                <h5>Disiplinler Arası Okuma</h5>
+                                <p class="description">Siyaset, toplumun bir parçasıdır. Diğer parçaları anlamadan siyaseti anlayamazsın.</p>
+                                <ul>
+                                    <li><strong>Tarih/Antropoloji:</strong> *Yuval Noah Harari - Sapiens*, *Jared Diamond - Tüfek, Mikrop ve Çelik*.</li>
+                                    <li><strong>Sanat Tarihi:</strong> *Ernst Gombrich - Sanatın Öyküsü*. (Bir propaganda aracının tarihini görmek için).</li>
+                                    <li><strong>Bilim Tarihi/Felsefesi:</strong> *Celal Şengör - Bilgiyle Sohbet*, *Thomas Kuhn - Bilimsel Devrimlerin Yapısı*.</li>
+                                    <li><strong>Ekonomi:</strong> *Daron Acemoğlu - Ulusların Düşüşü*. (Siyasal kurumlar ve ekonomi arasındaki bağ).</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h5>Podcast & Belgeseller</h5>
+                                <ul>
+                                    <li><strong>Podcast'ler (TR):</strong> "Fularsız Entellik", "KALT", "Barış Özcan (YouTube/Podcast)", "Açık Bilim".</li>
+                                    <li><strong>Podcast'ler (EN):</strong> "TED Talks Daily", "Radiolab", "Stuff You Should Know".</li>
+                                    <li><strong>Belgesel Serileri:</strong> "Cosmos" (Bilim), "Pandemic" (Sağlık Politikası), "The Social Dilemma" (Teknoloji Politikası), "Inside Job" (Ekonomi Politik), "Abstract: The Art of Design" (Sanat/Tasarım).</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <!-- YENİ BÖLÜM: Gemini Bilgi Köşesi -->
+                        <div class="gemini-info-box">
+                            <h4 class="text-lg font-semibold text-green-800 mb-2">Gemini Bilgi Köşesi: Bağlantı Kur!</h4>
+                            <p class="text-green-700">
+                                Bugün siyaset, büyük ölçüde "sosyal medya algoritmaları" tarafından şekilleniyor. Bu algoritmalar <strong>(Python)</strong>, insanların hangi haberleri göreceğini belirleyerek kamuoyunu <strong>(Siyaset Bilimi)</strong> etkiliyor. Bu durum, "yankı odaları" (echo chambers) yaratarak toplumsal kutuplaşmayı <strong>(Sosyoloji/Genel Kültür)</strong> artırıyor. Bu da "gerçeğin" ne olduğu konusunda felsefi bir tartışmayı <strong>(Analitik Düşünme)</strong> tetikliyor. Gördüğün gibi, 5 alanın hepsi tek bir konunun içinde!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sağ Panel: Hedef Takip, Analiz, Notlar --><div class="lg:col-span-1 flex flex-col gap-8 fade-in" style="animation-delay: 0.6s;">
+                
+                <!-- GÜNLÜK HEDEF TAKİP KARTI --><div class="content-card p-6">
+                    <h3 class="text-xl font-bold text-purple-700 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M10 12h.01M12 12h.01M12 15h.01M14 12h.01M17 12h.01M17 15h.01M17 18h.01M10 18h.01M12 18h.01M3 20h18a2 2 0 002-2V6a2 2 0 00-2-2H3a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Bugünün Hedefi & Takip
+                    </h3>
+                    <div class="mb-4">
+                        <label for="targetTime" class="block text-gray-700 text-sm font-semibold mb-2">Hedeflenen Çalışma Süresi (saat):</label>
+                        <input type="number" id="targetTime" class="w-full p-2 border border-gray-300 rounded-lg" min="0.5" step="0.5" value="2">
+                    </div>
+                    <div class="mb-4">
+                        <label for="workedTime" class="block text-gray-700 text-sm font-semibold mb-2">Bugün Çalışılan Süre (saat):</label>
+                        <input type="number" id="workedTime" class="w-full p-2 border border-gray-300 rounded-lg" min="0" step="0.5" value="0">
+                    </div>
+                    <!-- YENİ Butonlar -->
+                    <div class="flex flex-col sm:flex-row gap-2 mt-4">
+                        <button onclick="saveDailyProgress()" class="w-full bg-purple-500 text-white p-3 rounded-lg font-semibold hover:bg-purple-600 transition duration-300">
+                            Kaydet ve İlerle!
+                        </button>
+                        <button onclick="resetDailyProgress()" class="w-full sm:w-auto bg-gray-400 text-white px-4 py-3 rounded-lg font-semibold hover:bg-gray-500 transition duration-300" title="Bugünkü çalışılan süreyi sıfırlar">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.357-2a8.001 8.001 0 0015.357 2m0 0H15" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p id="progressMessage" class="mt-4 text-sm text-center text-gray-600"></p>
+                </div>
+
+                <!-- GÜNCELLENMİŞ PERFORMANS ANALİZİ KARTI (GRAFİKLİ) --><div class="content-card p-6">
+                    <h3 class="text-xl font-bold text-purple-700 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Performans Analizin
+                    </h3>
+                    <div class="text-gray-700 space-y-4" id="performanceSummary">
+                        <!-- Bugün Grafiği -->
+                        <div>
+                            <div class="flex justify-between text-sm font-semibold mb-1">
+                                <span>Bugün</span>
+                                <span id="todaySummaryText">Yükleniyor...</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="todayBar" class="progress-bar-fg" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <!-- Hafta Grafiği -->
+                        <div>
+                            <div class="flex justify-between text-sm font-semibold mb-1">
+                                <span>Bu Hafta</span>
+                                <span id="weekSummaryText">Yükleniyor...</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="weekBar" class="progress-bar-fg" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <!-- Ay Grafiği -->
+                        <div>
+                            <div class="flex justify-between text-sm font-semibold mb-1">
+                                <span>Bu Ay</span>
+                                <span id="monthSummaryText">Yükleniyor...</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="monthBar" class="progress-bar-fg" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- YENİ: Çalışma Serisi -->
+                    <div class="mt-6 pt-4 border-t border-gray-200 text-center">
+                        <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Çalışma Serisi</h4>
+                        <p id="streakCounter" class="text-5xl font-bold text-purple-600">0</p>
+                        <p class="text-gray-500 text-sm">günlük seri!</p>
+                    </div>
+                </div>
+
+                <!-- YENİ KART: Yapılacaklar Listesi -->
+                <div class="content-card p-6">
+                    <h3 class="text-xl font-bold text-purple-700 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Bugünün Görevleri
+                    </h3>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="taskInput" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Yeni görev ekle..." onkeydown="if(event.key==='Enter') addTask()">
+                        <button onclick="addTask()" class="bg-purple-500 text-white px-4 rounded-lg font-semibold hover:bg-purple-600 transition duration-300">Ekle</button>
+                    </div>
+                    <ul id="taskList" class="space-y-3 max-h-48 overflow-y-auto">
+                        <!-- JS burayı dolduracak -->
+                    </ul>
+                </div>
+
+                <!-- YENİ KART: Günün İlhamı -->
+                <div class="content-card p-6">
+                    <h3 class="text-xl font-bold text-purple-700 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M12 21v-1m0-10a5 5 0 00-5 5v3a5 5 0 0010 0v-3a5 5 0 00-5-5z" />
+                        </svg>
+                        Günün İlhamı
+                    </h3>
+                    <blockquote class="text-gray-600 italic border-l-4 border-purple-200 pl-4">
+                        <p id="dailyQuote">"Başarının sırrı, başlamaktır."</p>
+                        <cite id="quoteAuthor" class="block text-right not-italic font-semibold text-purple-500 mt-2">- Mark Twain</cite>
+                    </blockquote>
+                </div>
+
+                <!-- GÜNCELLENMİŞ KİŞİSEL NOTLAR KARTI --><div class="content-card p-6">
+                    <h3 class="text-xl font-bold text-purple-700 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        Kişisel Notların
+                    </h3>
+                    
+                    <!-- GÜNCELLEME: Kayıtlı Notları Gösterme Alanı -->
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">Geçmiş Notların:</label>
+                    <div id="savedNotesDisplay" class="mb-4 p-3 bg-white border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
+                        <p class="text-gray-500 italic">Henüz kayıtlı notun yok...</p>
+                    </div>
+                    
+                    <!-- GÜNCELLEME: Not Ekleme Alanı -->
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">Yeni Not Ekle:</label>
+                    <textarea id="personalNotes" class="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-500 transition duration-200" placeholder="Aklına gelen fikirleri, öğrendiğin yeni bilgileri veya hedeflerini buraya not alabilirsin..."></textarea>
+                    <button onclick="saveNotes()" class="w-full bg-purple-400 text-white p-3 rounded-lg font-semibold mt-4 hover:bg-purple-500 transition duration-300">
+                        Yeni Notu Kaydet
+                    </button>
+                    <p id="notesMessage" class="mt-4 text-sm text-center text-green-600"></p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- GEMINI'NİN EKSTRA NOTU BÖLÜMÜ --><div class="mt-10 fade-in" style="animation-delay: 0.8s;">
+            <div class="gemini-note p-6">
+                <h3 class="text-xl font-semibold text-blue-800 mb-2 flex items-center">
+                    <!-- Ikon: Ampul --><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M11 3a1 1 0 100 2h.01a1 1 0 100-2H11zM10 16a6 6 0 100-12 6 6 0 000 12zM10 18a8 8 0 100-16 8 8 0 000 16zM5 9a1 1 0 100-2 1 1 0 000 2z" />
+                    </svg>
+                    Gemini'den Sana Özel Not: Dönüşümün Anahtarı
+                </h3>
+                <p class="text-blue-700 mb-4">
+                    Songül, bu pano sadece bir araç değil, bu senin kişisel dönüşüm manifeston. 5 alanın hepsi birbiriyle konuşuyor.
+                </p>
+                <ul class="list-disc pl-5 text-blue-700 space-y-1">
+                    <li><strong>"Sıfır Günü" Kuralı:</strong> Her gün, hedeflerin için *en az bir* küçük adım at. 5 dakika İngilizce kelime bakmak, 10 dakika Python kodu yazmak... Yeter ki zinciri kırma. Başarı, tutarlılıkta gizli!</li>
+                    <li><strong>Bağlantı Kur (En Önemlisi):</strong> Artık her şeyi birbiriyle gör. Python öğrenirken İngilizce kaynak kullan. Siyaset makalesi okurken "Genel Kültür" bilgini kullan.</li>
+                    <li><strong>Süreci Sev:</strong> Bu bir yarış değil, bir keşif yolculuğu. Merakını kaybetme ve bu sürecin tadını çıkar! Senin için en değerli yatırım, kendine yaptığın yatırımdır. Potansiyeline inanıyorum!</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript (Sekme Fonksiyonu, Kayıt ve Analiz) --><script>
+        // --- Veri Depolama Anahtarları ---
+        const PROGRESS_KEY = 'songulDailyProgress';
+        const NOTES_KEY = 'songulPersonalNotes';
+        const GOALS_KEY = 'songulGoals';
+        const TODO_LIST_KEY = 'songulTodoList'; // YENİ
+
+        // YENİ: Günün Sözleri Dizisi
+        const quotes = [
+            { text: "Başarının sırrı, başlamaktır.", author: "Mark Twain" },
+            { text: "Geleceği tahmin etmenin en iyi yolu, onu yaratmaktır.", author: "Peter Drucker" },
+            { text: "Öğrenmek, kendi zihnine yaptığın bir yolculuktur.", author: "Bilinmiyor" },
+            { text: "Yapabileceğinin en iyisini yap. Nerede olursan ol, elindekilerle.", author: "Theodore Roosevelt" },
+            { text: "Disiplin, hedefler ve başarı arasındaki köprüdür.", author: "Jim Rohn" },
+            { text: "Bugünün uzmanı da bir zamanlar acemiydi.", author: "Helen Hayes" },
+            { text: "Küçük adımların gücünü asla küçümseme.", author: "Bilinmiyor" },
+            { text: "Potansiyelinin farkına var ve onu serbest bırak.", author: "Gemini" }
+        ];
+
+        // --- Sekme Fonksiyonu ---
+        function changeTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(tabName).style.display = 'block';
+            document.getElementById('btn-' + tabName).classList.add('active');
+        }
+
+        // --- Günlük Çalışma Kayıt ve Analiz Fonksiyonları ---
+        const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+        let dailyProgress = JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {};
+
+        function saveDailyProgress() {
+            const targetTime = parseFloat(document.getElementById('targetTime').value) || 0;
+            const workedTime = parseFloat(document.getElementById('workedTime').value) || 0;
+
+            if (targetTime <= 0) {
+                document.getElementById('progressMessage').textContent = "Lütfen geçerli bir hedef süre gir, Songül!";
+                document.getElementById('progressMessage').classList.add('text-red-500');
+                return;
+            }
+
+            dailyProgress[today] = {
+                target: targetTime,
+                worked: workedTime,
+                date: today
+            };
+            localStorage.setItem(PROGRESS_KEY, JSON.stringify(dailyProgress));
+            
+            if (workedTime > 0) {
+                 document.getElementById('progressMessage').textContent = `Bugünkü ilerlemen kaydedildi, harikasın! Çalıştığın süre: ${workedTime} saat.`;
+                 document.getElementById('progressMessage').classList.add('text-green-600');
+                 document.getElementById('progressMessage').classList.remove('text-red-500', 'text-yellow-600');
+            } else {
+                 document.getElementById('progressMessage').textContent = "Çalışma süren 0 olarak kaydedildi.";
+                 document.getElementById('progressMessage').classList.add('text-yellow-600');
+                 document.getElementById('progressMessage').classList.remove('text-red-500', 'text-green-600');
+            }
+
+            updatePerformanceSummary(); // Kayıt sonrası özeti güncelle
+        }
+        
+        // YENİ FONKSİYON: resetDailyProgress
+        function resetDailyProgress() {
+            document.getElementById('workedTime').value = 0;
+            saveDailyProgress(); // 0 değerini kaydetmek için save fonksiyonunu çağır
+            document.getElementById('progressMessage').textContent = "Bugünkü çalışılan süre sıfırlandı.";
+            document.getElementById('progressMessage').classList.add('text-yellow-600');
+            document.getElementById('progressMessage').classList.remove('text-red-500', 'text-green-600');
+            // GÜNCELLEME: alert() yerine konsol günlüğü veya mesaj
+            // alert("Bugünkü çalışma süren sıfırlandı."); 
+            // saveDailyProgress zaten updatePerformanceSummary'yi çağırıyor, bu yüzden seri de güncellenecek.
+        }
+
+
+        function loadDailyProgress() {
+            if (dailyProgress[today]) {
+                document.getElementById('targetTime').value = dailyProgress[today].target;
+                document.getElementById('workedTime').value = dailyProgress[today].worked;
+            } else {
+                document.getElementById('targetTime').value = 2; // Varsayılan hedef
+                document.getElementById('workedTime').value = 0;
+            }
+        }
+
+        function updatePerformanceSummary() {
+            let totalTargetDay = 0, totalWorkedDay = 0;
+            let totalTargetWeek = 0, totalWorkedWeek = 0;
+            let totalTargetMonth = 0, totalWorkedMonth = 0;
+
+            const now = new Date();
+            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1))); // Pazartesi haftanın başı
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+            for (const dateKey in dailyProgress) {
+                const record = dailyProgress[dateKey];
+                const recordDate = new Date(record.date + "T00:00:00"); // Saat dilimi sorunlarını önle
+
+                // Bugün
+                if (record.date === today) {
+                    totalTargetDay = record.target;
+                    totalWorkedDay = record.worked;
+                }
+
+                // Bu Hafta (Pazartesi'den itibaren)
+                if (recordDate >= startOfWeek) {
+                    totalTargetWeek += record.target;
+                    totalWorkedWeek += record.worked;
+                }
+
+                // Bu Ay
+                if (recordDate.getFullYear() === startOfMonth.getFullYear() && recordDate.getMonth() === startOfMonth.getMonth()) {
+                    totalTargetMonth += record.target;
+                    totalWorkedMonth += record.worked;
+                }
+            }
+
+            // Metinleri Güncelle
+            document.getElementById('todaySummaryText').textContent = `${totalWorkedDay} / ${totalTargetDay} sa`;
+            document.getElementById('weekSummaryText').textContent = `${totalWorkedWeek} / ${totalTargetWeek} sa`;
+            document.getElementById('monthSummaryText').textContent = `${totalWorkedMonth} / ${totalTargetMonth} sa`;
+
+            // Grafikleri Güncelle
+            updateBar('todayBar', totalWorkedDay, totalTargetDay);
+            updateBar('weekBar', totalWorkedWeek, totalTargetWeek);
+            updateBar('monthBar', totalWorkedMonth, totalTargetMonth);
+
+            // YENİ: Çalışma Serisi Hesaplaması
+            let streakCount = 0;
+            let currentDate = new Date();
+            
+            while (true) {
+                const dateStr = currentDate.toISOString().slice(0, 10);
+                if (dailyProgress[dateStr] && dailyProgress[dateStr].worked > 0) {
+                    streakCount++;
+                    currentDate.setDate(currentDate.getDate() - 1); // Bir gün geri git
+                } else {
+                    // Ya o gün kayıt yok ya da 0 çalışmış
+                    // Serinin bittiği yer burasıdır.
+                    break;
+                }
+            }
+            document.getElementById('streakCounter').textContent = streakCount;
+        }
+
+        function updateBar(barId, worked, target) {
+            const bar = document.getElementById(barId);
+            if (!bar) return;
+            
+            let percentage = 0;
+            if (target > 0) {
+                percentage = Math.min(100, (worked / target) * 100);
+            }
+            
+            bar.style.width = percentage + '%';
+            
+            // Eğer %10'dan büyükse yüzdeliği içine yaz
+            if (percentage > 10) {
+                bar.textContent = `${Math.round(percentage)}%`;
+            } else {
+                bar.textContent = ''; // Çok küçükse yazıyı kaldır
+            }
+        }
+
+        // --- GÜNCELLENMİŞ Kişisel Notlar Fonksiyonları ---
+        function loadNotes() {
+            let notes = [];
+            try {
+                // Notları localStorage'dan al ve JSON olarak parse et
+                const savedNotes = localStorage.getItem(NOTES_KEY);
+                if (savedNotes) {
+                    notes = JSON.parse(savedNotes);
+                }
+                if (!Array.isArray(notes)) { // Eğer veri bozuksa veya eski formattaysa
+                    notes = [];
+                }
+            } catch (e) {
+                console.error("Notlar yüklenirken hata:", e);
+                notes = [];
+            }
+            
+            const displayArea = document.getElementById('savedNotesDisplay');
+            displayArea.innerHTML = ''; // Görüntüleme alanını temizle
+            
+            if (notes.length > 0) {
+                // Notları ters sırada göster (en yeni en üstte)
+                notes.slice().reverse().forEach(note => {
+                    const noteEl = document.createElement('div');
+                    noteEl.className = 'note-item';
+                    
+                    // Not içeriği ve tarihi
+                    const contentEl = document.createElement('div');
+                    contentEl.className = 'note-content';
+                    
+                    const textEl = document.createElement('p');
+                    textEl.innerText = note.text;
+                    textEl.className = 'note-text whitespace-pre-wrap';
+                    
+                    const dateEl = document.createElement('span');
+                    dateEl.innerText = note.date;
+                    dateEl.className = 'note-date';
+                    
+                    contentEl.appendChild(textEl);
+                    contentEl.appendChild(dateEl);
+                    
+                    // Sil butonu
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-note-btn';
+                    deleteBtn.title = "Notu Sil";
+                    deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>'; // Çöp kutusu ikonu
+                    deleteBtn.onclick = () => deleteNote(note.id); // Silme fonksiyonunu bağla
+                    
+                    noteEl.appendChild(contentEl);
+                    noteEl.appendChild(deleteBtn);
+                    displayArea.appendChild(noteEl);
+                });
+            } else {
+                displayArea.innerHTML = '<p class="text-gray-500 italic">Henüz kayıtlı notun yok...</p>';
+            }
+            
+            // Textarea'yı temizle, artık "yeni not" alanı
+            document.getElementById('personalNotes').value = "";
+        }
+
+        function saveNotes() {
+            const notesText = document.getElementById('personalNotes').value.trim();
+            const msgEl = document.getElementById('notesMessage');
+            
+            if (!notesText) {
+                msgEl.textContent = "Kaydetmek için bir not girmelisin.";
+                msgEl.className = "mt-4 text-sm text-center text-red-600";
+                setTimeout(() => { msgEl.textContent = ""; }, 3000);
+                return;
+            }
+
+            let notes = [];
+            try {
+                const savedNotes = localStorage.getItem(NOTES_KEY);
+                if (savedNotes) {
+                    notes = JSON.parse(savedNotes);
+                }
+                if (!Array.isArray(notes)) {
+                    notes = [];
+                }
+            } catch (e) {
+                notes = [];
+            }
+            
+            // Yeni not objesi oluştur
+            const newNote = {
+                id: Date.now(), // Silme işlemi için benzersiz bir ID
+                text: notesText,
+                date: new Date().toLocaleString('tr-TR') // Tarih ve saat
+            };
+
+            // Yeni notu dizinin sonuna ekle
+            notes.push(newNote);
+            
+            // Güncellenmiş diziyi localStorage'a kaydet
+            localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+            
+            // Textarea'yı temizle
+            document.getElementById('personalNotes').value = "";
+            
+            // Onay mesajı ver
+            msgEl.textContent = "Notların başarıyla kaydedildi!";
+            msgEl.className = "mt-4 text-sm text-center text-green-600";
+            setTimeout(() => { msgEl.textContent = ""; }, 3000);
+            
+            // Listeyi yenile
+            loadNotes();
+        }
+
+        // YENİ FONKSİYON: deleteNote
+        function deleteNote(id) {
+            let notes = [];
+            try {
+                const savedNotes = localStorage.getItem(NOTES_KEY);
+                if (savedNotes) {
+                    notes = JSON.parse(savedNotes);
+                }
+                if (!Array.isArray(notes)) {
+                    notes = [];
+                }
+            } catch (e) {
+                notes = [];
+            }
+            
+            // Notu ID'ye göre filtrele
+            const updatedNotes = notes.filter(note => note.id !== id);
+            
+            // Güncellenmiş diziyi kaydet
+            localStorage.setItem(NOTES_KEY, JSON.stringify(updatedNotes));
+            
+            // Listeyi yenile
+            loadNotes();
+        }
+
+        // --- YENİ Hedef Belirleme Fonksiyonları ---
+        
+        // Başlıkları ikonlarla eşleştirmek için bir harita
+        const goalIcons = {
+            "Siyaset Bilimi": "🏛️",
+            "İngilizce": "🌍",
+            "Python": "🐍",
+            "Analitik Düşünme": "🧠",
+            "Genel Kültür": "💡"
+        };
+        const defaultGoalTitles = ["Siyaset Bilimi", "İngilizce", "Python", "Analitik Düşünme", "Genel Kültür"];
+
+        function createGoalElement(title, value) {
+            const goalList = document.getElementById('goal-list');
+            const newGoalDiv = document.createElement('div');
+            const icon = goalIcons[title] || '🎯'; // Varsayılan hedef ikonu
+            
+            newGoalDiv.innerHTML = `
+                <div>
+                    <label for="goal-${title.replace(/\s+/g, '-')}" class="block text-gray-700 text-sm font-semibold mb-2">${icon} ${title} Vizyonum:</label>
+                    <textarea id="goal-${title.replace(/\s+/g, '-')}" data-goal-title="${title}" class="w-full p-2 border border-gray-300 rounded-lg" rows="3" placeholder="Bu alandaki vizyonun nedir?">${value}</textarea>
+                </div>
+            `;
+            goalList.appendChild(newGoalDiv);
+        }
+        
+        function addNewGoalCategory() {
+            const input = document.getElementById('newGoalName');
+            const newTitle = input.value.trim();
+            
+            if (!newTitle) {
+                alert("Lütfen geçerli bir hedef adı girin.");
+                return;
+            }
+            
+            // Mevcut hedefleri kontrol et
+            const existingGoals = document.querySelectorAll('#goal-list textarea');
+            let ayniIsimVar = false;
+            existingGoals.forEach(textarea => {
+                if (textarea.dataset.goalTitle.toLowerCase() === newTitle.toLowerCase()) {
+                    ayniIsimVar = true;
+                }
+            });
+
+            if (ayniIsimVar) {
+                alert("Bu isimde bir hedef zaten var!");
+                return;
+            }
+            
+            createGoalElement(newTitle, ""); // Yeni hedefi boş değerle oluştur
+            input.value = ""; // Input'u temizle
+        }
+        
+        function loadGoals() {
+            const savedGoals = JSON.parse(localStorage.getItem(GOALS_KEY)) || {};
+            const savedTitles = Object.keys(savedGoals);
+            
+            // Bir Set kullanarak varsayılan ve kayıtlı başlıkları birleştir, sırayı koru
+            const allTitles = [...new Set([...defaultGoalTitles, ...savedTitles])];
+            
+            allTitles.forEach(title => {
+                createGoalElement(title, savedGoals[title] || "");
+            });
+        }
+
+        function saveGoals() {
+            const goals = {};
+            const textareas = document.querySelectorAll('#goal-list textarea');
+            
+            textareas.forEach(textarea => {
+                const title = textarea.dataset.goalTitle;
+                const value = textarea.value;
+                goals[title] = value;
+            });
+            
+            localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+            alert("Vizyonun ve hedeflerin kaydedildi! Şimdi harekete geçme zamanı.");
+        }
+
+        // --- YENİ: Yapılacaklar Listesi Fonksiyonları ---
+                
+        let todoList = JSON.parse(localStorage.getItem(TODO_LIST_KEY)) || [];
+
+        function saveTodoList() {
+            localStorage.setItem(TODO_LIST_KEY, JSON.stringify(todoList));
+        }
+
+        function renderTodoList() {
+            const taskListEl = document.getElementById('taskList');
+            taskListEl.innerHTML = ''; // Listeyi temizle
+
+            if (todoList.length === 0) {
+                taskListEl.innerHTML = '<p class="text-gray-500 text-sm italic">Bugün için henüz bir görev eklemedin.</p>';
+                return;
+            }
+
+            todoList.forEach((task, index) => {
+                const li = document.createElement('li');
+                
+                // Checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = task.completed;
+                checkbox.onchange = () => toggleTask(index);
+                
+                // Task Text
+                const span = document.createElement('span');
+                span.textContent = task.text;
+                if (task.completed) {
+                    span.className = 'completed';
+                }
+                
+                // Delete Button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.title = "Görevi Sil";
+                deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+                deleteBtn.onclick = () => deleteTask(index);
+                
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                li.appendChild(deleteBtn);
+                taskListEl.appendChild(li);
+            });
+        }
+
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const text = taskInput.value.trim();
+            
+            if (text) {
+                todoList.push({ text: text, completed: false });
+                taskInput.value = ''; // Input'u temizle
+                saveTodoList();
+                renderTodoList();
+            }
+        }
+
+        function toggleTask(index) {
+            if (todoList[index]) {
+                todoList[index].completed = !todoList[index].completed;
+                saveTodoList();
+                renderTodoList();
+            }
+        }
+
+        function deleteTask(index) {
+            // GÜNCELLEME: confirm() kaldırıldı çünkü iframe'de çalışmıyor ve silmeyi engelliyor.
+            if (todoList[index]) { 
+                // if (todoList[index] && confirm("Bu görevi silmek istediğine emin misin?")) { // Eski hatalı kod
+                todoList.splice(index, 1); // Öğeyi diziden kaldır
+                saveTodoList();
+                renderTodoList();
+            }
+        }
+        
+        function loadTodoList() {
+            renderTodoList(); // Sadece render et, veri zaten globalde yüklendi
+        }
+
+        // YENİ: Günün Sözünü Yükleme Fonksiyonu
+        function loadDailyQuote() {
+            try {
+                const todayIndex = new Date().getDate() % quotes.length; // Günün sayısına göre bir söz seç (1-31)
+                const quote = quotes[todayIndex];
+                document.getElementById('dailyQuote').textContent = `"${quote.text}"`;
+                document.getElementById('quoteAuthor').textContent = `- ${quote.author}`;
+            } catch (e) {
+                console.error("Günün sözü yüklenemedi:", e);
+            }
+        }
+
+
+        // --- Sayfa Yüklendiğinde ---
+        document.addEventListener('DOMContentLoaded', () => {
+            changeTab('hedeflerim'); // Varsayılan olarak YENİ "Hedeflerim" sekmesini göster
+            loadDailyProgress();
+            updatePerformanceSummary();
+            loadNotes();
+            loadGoals(); // YENİ: Dinamik hedefleri yükle
+            loadTodoList(); // YENİ: Yapılacaklar listesini yükle
+            loadDailyQuote(); // YENİ: Günün ilham sözünü yükle
+        });
+    </script>
+
+</body>
+</html>
